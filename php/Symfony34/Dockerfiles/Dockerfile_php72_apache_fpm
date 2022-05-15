@@ -4,10 +4,10 @@ RUN apt-get update \
     && apt-get install -y \
         apache2 \
         git \
-        libapache2-mod-fastcgi \
+#        libapache2-mod-fastcgi \
         libmcrypt-dev \
         libmemcached-dev \
-        mysql-client \
+#        mysql-client \
         nginx \
         procps \
         supervisor \
@@ -44,7 +44,7 @@ ARG WEB_APP_PATH
 COPY ${WEB_APP_PATH} /var/www
 
 # Install DDTrace deb
-ADD https://github.com/DataDog/dd-trace-php/releases/download/${DD_TRACE_VERSION}/datadog-php-tracer_${DD_TRACE_VERSION}-beta_amd64.deb datadog-php-tracer.deb
+ADD https://github.com/DataDog/dd-trace-php/releases/download/${DD_TRACE_VERSION}/datadog-php-tracer_${DD_TRACE_VERSION}_amd64.deb datadog-php-tracer.deb
 RUN dpkg -i datadog-php-tracer.deb
 
 COPY Dockerfiles/php_nginx_default.conf /etc/nginx/sites-available/default

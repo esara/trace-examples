@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: laravel57-php72-nginx
+  name: laravel57-php72-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: laravel57-php72-nginx
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: laravel57-php72-nginx
+    spec:
+      containers:
+        - env:
+            - name: DD_AGENT_HOST
+              value: agent.datadog
+            - name: DD_TRACE_APP_NAME
+              value: laravel57_php72_nginx
+            - name: DD_TRACE_DEBUG
+              value: "true"
+          image: esara/laravel57-php72-nginx
+          name: laravel57-php72-nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /root/.composer/cache
+              name: composer-cache
+            - mountPath: /var/www
+              name: laravel57-php72-nginx
+      restartPolicy: Always
+      volumes:
+        - name: composer-cache
+          emptyDir: {}
+        - name: laravel57-php72-nginx
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: laravel57-php72-nginx
+  name: laravel57-php72-nginx
+spec:
+  ports:
+    - name: "7059"
+      port: 7059
+      targetPort: 80
+  selector:
+    app.kubernetes.io/name: laravel57-php72-nginx

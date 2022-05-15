@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: symfony34-php56-apache
+  name: symfony34-php56-apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: symfony34-php56-apache
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: symfony34-php56-apache
+    spec:
+      containers:
+        - env:
+            - name: DD_AGENT_HOST
+              value: agent.datadog
+            - name: DD_TRACE_APP_NAME
+              value: symfony_php56_apache
+            - name: DD_TRACE_DEBUG
+              value: "true"
+          image: esara/symfony34-php56-apache
+          name: symfony34-php56-apache
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /root/.composer/cache
+              name: composer-cache
+      restartPolicy: Always
+      volumes:
+        - name: composer-cache
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: symfony34-php56-apache
+  name: symfony34-php56-apache
+spec:
+  ports:
+    - name: "9034"
+      port: 9034
+      targetPort: 80
+  selector:
+    app.kubernetes.io/name: symfony34-php56-apache

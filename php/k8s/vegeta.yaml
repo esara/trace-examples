@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vegeta
+  labels:
+    app: php
+    component: vegeta
+spec:
+  selector:
+    matchLabels:
+      app: php
+      component: vegeta
+  minReadySeconds: 5
+  progressDeadlineSeconds: 120
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: php
+        component: vegeta
+    spec:
+      containers:
+        - name: client
+          imagePullPolicy: IfNotPresent
+          image: peterevans/vegeta
+          command:
+            - sh
+            - '-c'
+            - "sleep 5 && echo GET http://laravel42-php56-apache.php:8042/ | vegeta attack -duration=10m -rate=1 & \
+              echo GET http://laravel57-php71-nginx.php:7057/ | vegeta attack -duration=10m -rate=1 & \
+              echo GET http://laravel57-php72-apache.php:7058/ | vegeta attack -duration=10m -rate=1 & \
+              echo GET http://laravel57-php72-nginx.php:7059/ | vegeta attack -duration=10m -rate=1 & \
+              echo GET http://symfony34-php56-apache.php:9034/ | vegeta attack -duration=10m -rate=1"

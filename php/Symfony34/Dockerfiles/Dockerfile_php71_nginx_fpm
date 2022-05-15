@@ -5,7 +5,7 @@ RUN apt-get update \
         git \
         libmcrypt-dev \
         libmemcached-dev \
-        mysql-client \
+#        mysql-client \
         nginx \
         procps \
         supervisor \
